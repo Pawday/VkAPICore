@@ -85,7 +85,9 @@ public class Token
             } catch (IOException e)
             {
                 e.printStackTrace();
-            } catch (ParseException e) {
+            }
+            catch (ParseException e)
+            {
                 e.printStackTrace();
             }
         }
