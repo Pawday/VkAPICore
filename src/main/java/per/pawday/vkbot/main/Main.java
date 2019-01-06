@@ -11,10 +11,17 @@ public class Main
     {
         Token token = new Token();
         Functions jsonFuns = new Functions();
-        Advanced advancedConf = new Advanced();
+        Advanced advanced = new Advanced();
+        per.pawday.vkbot.configs.Main mainConf = new per.pawday.vkbot.configs.Main();
+
+        System.out.println(mainConf.exterior.hasInvocations("h"));
 
 
-        System.out.println(advancedConf.heroku.usage);
+
+
+
+
+
 
 
     }

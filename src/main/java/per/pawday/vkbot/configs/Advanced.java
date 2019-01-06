@@ -12,6 +12,7 @@ import java.io.IOException;
 public class Advanced
 {
     public Heroku heroku = new Heroku();
+    public Database database = new Database();
 
 
     private File dir = new File("configs");
@@ -25,6 +26,17 @@ public class Advanced
                 "\t\"heroku\":\n" +
                 "\t{\n" +
                 "\t\t\"usage\":false\n" +
+                "\t},\n" +
+                "\t\"database\": \n" +
+                "\t{\n" +
+                "\t\t\"mysql\":\n" +
+                "\t\t{\n" +
+                "\t\t\t\"port\": \"3306\" \n" +
+                "\t\t},\n" +
+                "\t\t\"postgresql\":\n" +
+                "\t\t{\n" +
+                "\t\t\t\"port\": \"5432\"\n" +
+                "\t\t}\n" +
                 "\t}\n" +
                 "}";
 
@@ -78,8 +90,16 @@ public class Advanced
             JSONObject main = (JSONObject) parser.parse(new FileReader(file));
 
             JSONObject heroku = (JSONObject) main.get("heroku");
+            JSONObject database = (JSONObject) main.get("database");
+            JSONObject databaseMysql = (JSONObject) database.get("mysql");
+            JSONObject databasePostgresql = (JSONObject) database.get("postgresql");
 
             this.heroku.usage = (Boolean) heroku.get("usage");
+
+            this.database.mysql.port = (String) databaseMysql.get("port");
+            this.database.postgresql.port = (String) databasePostgresql.get("port");
+
+
 
 
         }
@@ -99,5 +119,22 @@ public class Advanced
     public class Heroku
     {
         public Boolean usage;
+    }
+
+    public class Database
+    {
+        public MySQL mysql = new MySQL();
+        public PostgreSQL postgresql = new PostgreSQL();
+
+
+        public class MySQL
+        {
+            public String port;
+        }
+
+        public class PostgreSQL
+        {
+            public String port;
+        }
     }
 }
