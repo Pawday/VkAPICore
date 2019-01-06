@@ -88,7 +88,8 @@ public class Token
             }
             catch (ParseException e)
             {
-                e.printStackTrace();
+                System.out.println("Файл configs/token.json был поврежден");
+                System.exit(-1);
             }
         }
     }

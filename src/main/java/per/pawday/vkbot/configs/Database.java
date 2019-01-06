@@ -52,7 +52,7 @@ public class Database
 
         try
         {
-            FileWriter writer= new FileWriter(file);
+            FileWriter writer = new FileWriter(file);
             writer.write(template);
             writer.close();
         }
@@ -144,7 +144,8 @@ public class Database
         }
         catch (ParseException e)
         {
-            e.printStackTrace();
+            System.out.println("Файл configs/database.json был поврежден");
+            System.exit(-1);
         }
         catch (IOException e)
         {
