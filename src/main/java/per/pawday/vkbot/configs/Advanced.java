@@ -25,7 +25,11 @@ public class Advanced
                 "{\n" +
                 "\t\"heroku\":\n" +
                 "\t{\n" +
-                "\t\t\"usage\":false\n" +
+                "\t\t\"usage\" : false,\n" +
+                "\t\t\"database\":\n" +
+                "\t\t{\n" +
+                "\t\t\t\"usage\":false\n" +
+                "\t\t}\n" +
                 "\t},\n" +
                 "\t\"database\": \n" +
                 "\t{\n" +
@@ -90,11 +94,14 @@ public class Advanced
             JSONObject main = (JSONObject) parser.parse(new FileReader(file));
 
             JSONObject heroku = (JSONObject) main.get("heroku");
+            this.heroku.usage = (boolean) heroku.get("usage");
+            JSONObject herokuDatabase = (JSONObject) heroku.get("database");
+
             JSONObject database = (JSONObject) main.get("database");
             JSONObject databaseMysql = (JSONObject) database.get("mysql");
             JSONObject databasePostgresql = (JSONObject) database.get("postgresql");
 
-            this.heroku.usage = (Boolean) heroku.get("usage");
+            this.heroku.database.usage = (Boolean) herokuDatabase.get("usage");
 
             this.database.mysql.port = (String) databaseMysql.get("port");
             this.database.postgresql.port = (String) databasePostgresql.get("port");
@@ -118,7 +125,13 @@ public class Advanced
 
     public class Heroku
     {
-        public Boolean usage;
+        public boolean usage;
+        public Database database = new Database();
+
+        public class Database
+        {
+            public Boolean usage;
+        }
     }
 
     public class Database
