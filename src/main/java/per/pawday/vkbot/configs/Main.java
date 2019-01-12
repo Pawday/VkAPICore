@@ -24,8 +24,8 @@ public class Main
                 "{\n" +
                 "\t\"exterior\":\n" +
                 "\t{\n" +
-                "\t\t\"titleName\": \"\",\n" +
-                "\t\t\"invocations\": [\"\"]\n" +
+                "\t\t\"titleName\":\"\",\n" +
+                "\t\t\"invocations\":[\"\"]\n" +
                 "\t}\n" +
                 "}";
 

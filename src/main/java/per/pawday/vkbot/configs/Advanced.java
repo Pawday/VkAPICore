@@ -25,21 +25,21 @@ public class Advanced
                 "{\n" +
                 "\t\"heroku\":\n" +
                 "\t{\n" +
-                "\t\t\"usage\" : false,\n" +
+                "\t\t\"usage\":false,\n" +
                 "\t\t\"database\":\n" +
                 "\t\t{\n" +
                 "\t\t\t\"usage\":false\n" +
                 "\t\t}\n" +
                 "\t},\n" +
-                "\t\"database\": \n" +
+                "\t\"database\":\n" +
                 "\t{\n" +
                 "\t\t\"mysql\":\n" +
                 "\t\t{\n" +
-                "\t\t\t\"port\": \"3306\" \n" +
+                "\t\t\t\"port\":\"3306\" \n" +
                 "\t\t},\n" +
                 "\t\t\"postgresql\":\n" +
                 "\t\t{\n" +
-                "\t\t\t\"port\": \"5432\"\n" +
+                "\t\t\t\"port\":\"5432\"\n" +
                 "\t\t}\n" +
                 "\t}\n" +
                 "}";

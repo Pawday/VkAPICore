@@ -31,9 +31,9 @@ public class Database
                         "\t\t\t\"database\":\"\"\n" +
                         "\t\t}\n" +
                         "\t},\n" +
-                        "\t\"PostgreSQL\" : \n" +
+                        "\t\"PostgreSQL\":\n" +
                         "\t{\n" +
-                        "\t\t\"usage\" : false,\n" +
+                        "\t\t\"usage\":false,\n" +
                         "\t\t\"primary\":false,\n" +
                         "\t\t\"connection\":\n" +
                         "\t\t{\n" +
@@ -46,7 +46,7 @@ public class Database
                         "\t\"SQLite\":\n" +
                         "\t{\n" +
                         "\t\t\"usage\":false,\n" +
-                        "\t\t\"primary\":true,\n" +
+                        "\t\t\"primary\":false\n" +
                         "\t}\n" +
                         "}";
 
