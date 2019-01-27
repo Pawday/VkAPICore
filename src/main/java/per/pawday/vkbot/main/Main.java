@@ -9,11 +9,13 @@ import per.pawday.vkbot.configs.Token;
 import per.pawday.vkbot.databases.mysql.MySQL;
 import per.pawday.vkbot.databases.postgresql.PostgreSQL;
 import per.pawday.vkbot.databases.sqlite.SQLite;
+import per.pawday.vkbot.module.Loader;
 import per.pawday.vkbot.vk.functions.Request;
 
 
 public class Main
 {
+    public static String coreVersion = "1.0.0";
     public static void main(String[] args)
     {
         Token token = new Token();
@@ -220,6 +222,26 @@ public class Main
                 }
             }
         }
+
+
+        Loader moduleLoader = new Loader();
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run()
+            {
+                moduleLoader.load();
+                moduleLoader.run();
+            }
+        });
+
+        thread.start();
+
+
+
+
+
+
 
 
 
