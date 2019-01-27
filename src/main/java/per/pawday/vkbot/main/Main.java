@@ -223,20 +223,21 @@ public class Main
             }
         }
 
-
         Loader moduleLoader = new Loader();
 
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run()
-            {
-                moduleLoader.load();
-                moduleLoader.run();
-            }
-        });
+        Runnable runnable = () ->
+        {
+            moduleLoader.load();
+            moduleLoader.run();
+        };
 
-        thread.start();
 
+        for (int i = 0; i < 100; i++)
+        {
+            Thread thread = new Thread(runnable);
+
+            thread.start();
+        }
 
 
 
