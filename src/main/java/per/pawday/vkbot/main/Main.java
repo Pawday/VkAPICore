@@ -11,6 +11,7 @@ import per.pawday.vkbot.databases.postgresql.PostgreSQL;
 import per.pawday.vkbot.databases.sqlite.SQLite;
 import per.pawday.vkbot.module.Loader;
 import per.pawday.vkbot.vk.functions.Request;
+import per.pawday.vkbot.vk.tools.LongPollServer;
 
 
 public class Main
@@ -32,6 +33,8 @@ public class Main
 
         //functions
         Request vkReq = new Request();
+        LongPollServer longPollServer = new LongPollServer();
+        per.pawday.vkbot.vk.tools.Permission permissions = new per.pawday.vkbot.vk.tools.Permission();
 
 
         //variables
@@ -182,7 +185,7 @@ public class Main
         {
             JSONObject res = vkReq.post(token.toString(),"users.get",new JSONObject());
 
-            per.pawday.vkbot.vk.tools.Permission Permissions = new per.pawday.vkbot.vk.tools.Permission();
+
 
 
 
@@ -213,7 +216,7 @@ public class Main
             }
             // confirmation permissions part
             {
-                boolean permission = Permissions.checkPermission(token.toString(),tokenType);
+                boolean permission = permissions.checkPermission(token.toString(),tokenType);
 
                 if (!permission)
                 {
@@ -231,13 +234,18 @@ public class Main
             moduleLoader.run();
         };
 
+        //event listener
 
-        for (int i = 0; i < 100; i++)
+
+
+        if (tokenType.equals("User"))
         {
-            Thread thread = new Thread(runnable);
-
-            thread.start();
+            while (true)
+            {
+                longPollServer.getEventsArr(token);
+            }
         }
+
 
 
 
