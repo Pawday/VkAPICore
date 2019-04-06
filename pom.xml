@@ -25,7 +25,7 @@
                     <appendAssemblyId>false</appendAssemblyId>
                     <archive>
                         <manifest>
-                            <mainClass>per.pawday.vkbot.main.Main</mainClass>
+                            <mainClass>per.pawday.vkbot.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
