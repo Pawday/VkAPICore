@@ -19,5 +19,19 @@ class Main
             System.exit(0);
         }
 
+        Configs.removeFiles();
+
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        Configs.returnFiles();
+
+
+        System.out.println(Configs.configs.tokens.getTokens()[0]);
     }
 }

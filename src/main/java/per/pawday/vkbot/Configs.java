@@ -1,5 +1,6 @@
 package per.pawday.vkbot;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -25,7 +26,7 @@ class Configs
 
 
     //files
-    private final static File configsToken = new File(configsDir.getName().concat("/token.json"));
+    private final static File configsToken = new File(configsDir.getName().concat("/tokens.json"));
     private final static File configsDatabase = new File(configsDir.getName().concat("/database.json"));
 
 
@@ -52,7 +53,7 @@ class Configs
     private static void createFiles()
     {
 
-        //token.json
+        //tokens.json
         if (! configsToken.exists())
         {
 
@@ -61,12 +62,12 @@ class Configs
                 configsToken.createNewFile();
                 FileOutputStream out = new FileOutputStream(configsToken);
 
-                out.write(JsonFormatter.formatToString(configs.token.tokenObject.toJSONString(),"\t").getBytes());
+                out.write(JsonFormatter.formatToString(configs.tokens.tokenObject.toJSONString(),"\t").getBytes());
                 out.close();
 
             } catch (IOException e)
             {
-                System.out.println(ConsoleColors.RED + configsDir.getName() + "/token.json");
+                System.out.println(ConsoleColors.RED + configsDir.getName() + "/tokens.json");
                 e.printStackTrace();
                 System.exit(1);
             }
@@ -85,7 +86,7 @@ class Configs
 
             } catch (IOException e)
             {
-                System.out.println(ConsoleColors.RED + configsDatabase.getName() + "/token.json");
+                System.out.println(ConsoleColors.RED + configsDatabase.getName() + "/tokens.json");
                 e.printStackTrace();
                 System.exit(1);
             }
@@ -95,7 +96,7 @@ class Configs
 
     private static void prepareObjects()
     {
-        //token.json
+        //tokens.json
         {
             try
             {
@@ -105,14 +106,14 @@ class Configs
                 stream.close();
 
 
-                if (fileObject.get("token") != null)
+                if (fileObject.get("tokens") != null)
                 {
-                    configs.token.tokenObject = fileObject;
+                    configs.tokens.tokenObject = fileObject;
                 }
             }
             catch (IOException e)
             {
-                System.out.println(ConsoleColors.RED + configsDir.getName() + "/token.json");
+                System.out.println(ConsoleColors.RED + configsDir.getName() + "/tokens.json");
                 e.printStackTrace();
                 System.exit(1);
             }
@@ -176,7 +177,7 @@ class Configs
             }
             catch (ParseException e)
             {
-                System.out.println(ConsoleColors.RED + "File " + configsDir.getName() + "/" + configsToken.getName() + " is broken" + ConsoleColors.RESET);
+                System.out.println(ConsoleColors.RED + "File " + configsDir.getName() + "/" + configsDatabase.getName() + " is broken" + ConsoleColors.RESET);
                 e.printStackTrace();
                 System.exit(1);
             }
@@ -187,12 +188,12 @@ class Configs
 
     private static void writeToFiles()
     {
-        //token.json
+        //tokens.json
         {
             try
             {
                 FileOutputStream out = new FileOutputStream(configsToken);
-                out.write(JsonFormatter.formatToString(configs.token.tokenObject.toJSONString(),"\t").getBytes(StandardCharsets.UTF_8));
+                out.write(JsonFormatter.formatToString(configs.tokens.tokenObject.toJSONString(),"\t").getBytes(StandardCharsets.UTF_8));
                 out.close();
             }
             catch (FileNotFoundException e)
@@ -202,7 +203,7 @@ class Configs
             }
             catch (IOException e)
             {
-                System.out.println(ConsoleColors.RED + configsDir.getName() + "/token.json");
+                System.out.println(ConsoleColors.RED + configsDir.getName() + "/tokens.json");
                 e.printStackTrace();
                 System.exit(1);
             }
@@ -231,9 +232,19 @@ class Configs
 
     private static void setParams()
     {
-        //token.json
+        //tokens.json
         {
-            configs.token.token = (String) configs.token.tokenObject.get("token");
+
+            JSONArray tokensJsonArray = (JSONArray) configs.tokens.tokenObject.get("tokens");
+            String[] tokens = new String[tokensJsonArray.size()];
+
+            for (int i = 0; i < tokens.length; i++)
+            {
+                tokens[i] = (String) tokensJsonArray.get(i);
+            }
+
+            configs.tokens.tokens = tokens;
+
         }
 
         //database.json
@@ -274,25 +285,25 @@ class Configs
 
     public static class TheConfigs
     {
-        public Token token = new Token();
+        public Tokens tokens = new Tokens();
         public Database database = new Database();
 
 
 
 
-        public static class Token
+        public static class Tokens
         {
-            private String token;
+            private String[] tokens;
             private JSONObject tokenObject = new JSONObject();
 
-            Token()
+            Tokens()
             {
-                tokenObject.put("token","");
+                tokenObject.put("tokens", new JSONArray());
             }
 
-            public String getToken()
+            public String[] getTokens()
             {
-                return token;
+                return tokens;
             }
 
 
