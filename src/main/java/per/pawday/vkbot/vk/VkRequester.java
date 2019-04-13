@@ -14,7 +14,7 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-public class VkRequest
+public class VkRequester
 {
     private static SSLSocketFactory ssf = (SSLSocketFactory) SSLSocketFactory.getDefault();
     private static JSONParser parser = new JSONParser();
@@ -23,19 +23,17 @@ public class VkRequest
 
 
     private String vkAPIVersion;
-    public void setVkAPIVersion(String vkAPIVersion)
+    private String token;
+
+    public VkRequester(String vkAPIVersion, String token)
     {
         this.vkAPIVersion = vkAPIVersion;
-    }
-
-    public VkRequest(String vkAPIVersion)
-    {
-        this.vkAPIVersion = vkAPIVersion;
+        this.token = token;
     }
 
 
 
-    public JSONObject post(String token , String method , Map<String,String> params) throws IOException
+    public JSONObject post(String method , Map<String,String> params) throws IOException
     {
 
 
