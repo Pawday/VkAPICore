@@ -14,24 +14,16 @@ class Main
     {
         if (args.length == 1 && args[0].equals("init"))
         {
+            Configs.removeFiles();
             Configs.returnFiles();
-            System.out.println(ConsoleColors.GREEN + "Make a setting up config files now." + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.GREEN + "Выполните настройку конфигурационных файлов." + ConsoleColors.RESET);
             System.exit(0);
         }
-
+        Configs.init();
         Configs.removeFiles();
-
-
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
 
         Configs.returnFiles();
 
 
-        System.out.println(Configs.configs.tokens.getTokens()[0]);
     }
 }

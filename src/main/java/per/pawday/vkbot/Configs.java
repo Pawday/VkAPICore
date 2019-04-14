@@ -9,6 +9,7 @@ import per.pawday.vkbot.json.JsonFormatter;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 class Configs
 {
@@ -26,11 +27,11 @@ class Configs
 
 
     //files
-    private final static File configsToken = new File(configsDir.getName().concat("/tokens.json"));
+    private final static File configsTokens = new File(configsDir.getName().concat("/tokens.json"));
     private final static File configsDatabase = new File(configsDir.getName().concat("/database.json"));
 
 
-    static
+    public static void init()
     {
         if (! configsDir.exists())
         {
@@ -54,13 +55,13 @@ class Configs
     {
 
         //tokens.json
-        if (! configsToken.exists())
+        if (! configsTokens.exists())
         {
 
             try
             {
-                configsToken.createNewFile();
-                FileOutputStream out = new FileOutputStream(configsToken);
+                configsTokens.createNewFile();
+                FileOutputStream out = new FileOutputStream(configsTokens);
 
                 out.write(JsonFormatter.formatToString(configs.tokens.tokenObject.toJSONString(),"\t").getBytes());
                 out.close();
@@ -101,14 +102,24 @@ class Configs
             try
             {
 
-                InputStream stream = new FileInputStream(configsToken);
+                InputStream stream = new FileInputStream(configsTokens);
                 JSONObject fileObject = (JSONObject) parser.parse(new InputStreamReader(stream));
                 stream.close();
 
 
-                if (fileObject.get("tokens") != null)
+                if
+                (
+                    fileObject.get("groups_tokens") != null &&
+                    fileObject.get("admins_tokens") != null
+                )
                 {
                     configs.tokens.tokenObject = fileObject;
+                }
+                else
+                {
+                    System.out.println(ConsoleColors.RED + "File " + configsDir.getName() + "/" + configsTokens.getName() + " был повреждён!" + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.YELLOW + "Не был найден один из параметров, отредактируйте этот файл или выполните инициализацию." + ConsoleColors.RESET);
+                    System.exit(1);
                 }
             }
             catch (IOException e)
@@ -119,7 +130,8 @@ class Configs
             }
             catch (ParseException e)
             {
-                System.out.println(ConsoleColors.RED + "File " + configsDir.getName() + "/" + configsToken.getName() + " is broken" + ConsoleColors.RESET);
+                System.out.println(ConsoleColors.RED + "File " + configsDir.getName() + "/" + configsTokens.getName() + " был повреждён!" + ConsoleColors.RESET);
+                System.out.println(ConsoleColors.YELLOW + "Была повреждена структура json: это может быть: стёртая запятая , фигурная скобка , квадратная скобка" + ConsoleColors.RESET);
                 e.printStackTrace();
                 System.exit(1);
             }
@@ -166,6 +178,85 @@ class Configs
                     {
                         configs.database.databaseObject = fileObject;
                     }
+                    else
+                    {
+                        ArrayList<String> params = new ArrayList<>();
+
+                        if (mysql.get("uses") == null)
+                        {
+                            params.add("MySQL -> uses");
+                        }
+                        if (mysql.get("host") == null)
+                        {
+                            params.add("MySQL -> host");
+                        }
+                        if (mysql.get("user") == null)
+                        {
+                            params.add("MySQL -> user");
+                        }
+                        if (mysql.get("password") == null)
+                        {
+                            params.add("MySQL -> password");
+                        }
+                        if (mysql.get("port") == null)
+                        {
+                            params.add("MySQL -> port");
+                        }
+
+                        if (postgresql.get("uses") == null)
+                        {
+                            params.add("PostgreSQL -> uses");
+                        }
+                        if (postgresql.get("host") == null)
+                        {
+                            params.add("PostgreSQL -> host");
+                        }
+                        if (postgresql.get("user") == null)
+                        {
+                            params.add("PostgreSQL -> user");
+                        }
+                        if (postgresql.get("password") == null)
+                        {
+                            params.add("PostgreSQL -> password");
+                        }
+                        if (postgresql.get("port") == null)
+                        {
+                            params.add("PostgreSQL -> port");
+                        }
+
+                        if (sqlite.get("uses") == null)
+                        {
+                            params.add("SQLite -> uses");
+                        }
+                        if (sqlite.get("path") == null)
+                        {
+                            params.add("SQLite -> path");
+                        }
+
+
+                        System.out.println(ConsoleColors.RED + "Файл " + configsDir.getName() + "/" + configsDatabase.getName() + " был повреждён!" + ConsoleColors.RESET);
+                        if (params.size() == 1)
+                        {
+                            System.out.println(ConsoleColors.YELLOW + "Не был найден параметр \"" + params.get(0) + "\", добавьте этот параметр в этот файл." + ConsoleColors.RESET);
+                        }
+                        else
+                        {
+                            System.out.println(ConsoleColors.YELLOW + "Не были найдены следующие параметры:" + ConsoleColors.RESET);
+                            for (int i = 0; i < params.size(); i++)
+                            {
+                                System.out.println((i + 1) + ". " + params.get(i));
+                            }
+                            System.out.println(ConsoleColors.YELLOW + "Добавьте эти параметры в этот файл или выполните инициалилацию.");
+                        }
+
+                        System.exit(1);
+                    }
+                }
+                else
+                {
+                    System.out.println(ConsoleColors.RED + "File " + configsDir.getName() + "/" + configsDatabase.getName() + " был повреждён!" + ConsoleColors.RESET);
+                    System.out.println(ConsoleColors.YELLOW + "Отсутствует один из параметров , отредактируйте этот файл или выполните инициализацию." + ConsoleColors.RESET);
+                    System.exit(1);
                 }
 
             }
@@ -177,7 +268,8 @@ class Configs
             }
             catch (ParseException e)
             {
-                System.out.println(ConsoleColors.RED + "File " + configsDir.getName() + "/" + configsDatabase.getName() + " is broken" + ConsoleColors.RESET);
+                System.out.println(ConsoleColors.RED + "File " + configsDir.getName() + "/" + configsDatabase.getName() + " был повреждён!" + ConsoleColors.RESET);
+                System.out.println(ConsoleColors.YELLOW + "Была повреждена структура json: это может быть: стёртая запятая , фигурная скобка , квадратная скобка" + ConsoleColors.RESET);
                 e.printStackTrace();
                 System.exit(1);
             }
@@ -192,7 +284,7 @@ class Configs
         {
             try
             {
-                FileOutputStream out = new FileOutputStream(configsToken);
+                FileOutputStream out = new FileOutputStream(configsTokens);
                 out.write(JsonFormatter.formatToString(configs.tokens.tokenObject.toJSONString(),"\t").getBytes(StandardCharsets.UTF_8));
                 out.close();
             }
@@ -235,15 +327,24 @@ class Configs
         //tokens.json
         {
 
-            JSONArray tokensJsonArray = (JSONArray) configs.tokens.tokenObject.get("tokens");
-            String[] tokens = new String[tokensJsonArray.size()];
+            JSONArray groupsTokensJsonArray = (JSONArray) configs.tokens.tokenObject.get("groups_tokens");
+            JSONArray adminsTokensJsonArray = (JSONArray) configs.tokens.tokenObject.get("admins_tokens");
 
-            for (int i = 0; i < tokens.length; i++)
+            String[] groupTokens = new String[groupsTokensJsonArray.size()];
+            String[] adminsTokens = new String[adminsTokensJsonArray.size()];
+
+            for (int i = 0; i < groupTokens.length; i++)
             {
-                tokens[i] = (String) tokensJsonArray.get(i);
+                groupTokens[i] = (String) groupsTokensJsonArray.get(i);
             }
 
-            configs.tokens.tokens = tokens;
+            for (int i = 0; i < adminsTokens.length; i++)
+            {
+                adminsTokens[i] = (String) adminsTokensJsonArray.get(i);
+            }
+
+            configs.tokens.groupsTokens = groupTokens;
+            configs.tokens.adminsTokens = adminsTokens;
 
         }
 
@@ -273,7 +374,7 @@ class Configs
 
     public static void removeFiles()
     {
-        configsToken.delete();
+        configsTokens.delete();
         configsDatabase.delete();
     }
 
@@ -293,17 +394,26 @@ class Configs
 
         public static class Tokens
         {
-            private String[] tokens;
+            private String[] groupsTokens;
+            private String[] adminsTokens;
+
             private JSONObject tokenObject = new JSONObject();
 
             Tokens()
             {
-                tokenObject.put("tokens", new JSONArray());
+                JSONArray sampleText = new JSONArray();
+                sampleText.add("");
+                tokenObject.put("groups_tokens", sampleText);
+                tokenObject.put("admins_tokens", sampleText);
             }
 
-            public String[] getTokens()
+            public String[] getGroupsTokens()
             {
-                return tokens;
+                return groupsTokens;
+            }
+            public String[] getAdminsTokens()
+            {
+                return adminsTokens;
             }
 
 
