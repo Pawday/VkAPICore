@@ -28,104 +28,87 @@ public class JsonFormatter
         while ((by = reader.read()) != -1)
         {
             c = (char) by;
-
-            switch (c)
+            if (!inString)
             {
+                switch (c) {
+                    case '{':
+                    case '[':
 
-                case '{':
-                case '[':
-                    if (! inString)
-                    {
-                        if (builder.length() != 0 )
-                        {
+                        if (builder.length() != 0){
                             builder.append('\n');
-                            for (int i = 0; i < indent; i++)
-                            {
+                            for (int i = 0;i < indent;i++) {
                                 builder.append(separator);
                             }
                         }
 
                         builder.append(c).append('\n');
                         indent++;
-                        for (int i = 0; i < indent; i++)
-                        {
+                        for (int i = 0;i < indent;i++) {
                             builder.append(separator);
                         }
-                    } else builder.append(c);
-                    break;
 
-                case '}':
-                case ']':
-                    indent--;
-                    builder.append('\n');
-                    for (int i = 0; i < indent; i++)
-                    {
-                        builder.append(separator);
-                    }
-                    builder.append(c);
-                    break;
+                        break;
 
-                case '"':
-                    if (! inString)
-                    {
-                        inString = true;
-                    }
-                    else
-                    {
-                        inString = false;
-                    }
+                    case '}':
+                    case ']':
 
-                    builder.append('"');
-                    break;
+                        indent--;
+                        builder.append('\n');
+                        for (int i = 0;i < indent;i++) {
+                            builder.append(separator);
+                        }
+                        builder.append(c);
+                        break;
 
 
-                case ',':
+                    case ',':
 
-                    if (! inString)
-                    {
                         builder.append(',').append('\n');
-                        for (int i = 0; i < indent; i++)
-                        {
+                        for (int i = 0;i < indent;i++) {
                             builder.append(separator);
                         }
-                    } else builder.append(c);
-
-                    break;
 
 
-                case ':':
-                    if (! inString)
-                    {
+                        break;
+
+
+                    case ':':
                         builder.append(' ').append(':').append(' ');
-                    } else builder.append(c);
-                    break;
 
-                case '\t':
+                        break;
 
-                case ' ':
-                    if (inString)
-                    {
-                        builder.append(' ');
-                    }
-                    break;
+                    case '\t':
+                    case ' ':
+                    case '\n':
+                    case '\r':
 
-                case '\n':
-                case '\r':
+                        break;
 
-                    break;
+                    case '"':
+                        inString = true;
+                        builder.append('"');
+                        break;
 
+                    default:
+                        builder.append(c);
 
-
-                default:
-                    builder.append(c);
-
+                }
             }
+            else if (c == '"')
+            {
+                inString = false;
+                builder.append('"');
+            } else builder.append(c);
+
 
 
         }
 
         return builder;
     }
+
+
+
 
 
     public static StringBuilder formatToStringBuilder(InputStream stream,String separator) throws IOException
@@ -139,7 +122,7 @@ public class JsonFormatter
         return formatToBuilder(new ByteInputStream(bytes),separator);
     }
 
-    public static StringBuilder formatToStringBuilder(Reader reader,String separator) throws IOException
+    public static StringBuilder formatToStringBuilder(final Reader reader, String separator) throws IOException
     {
         return formatToBuilder(new InputStream()
         {
@@ -162,7 +145,7 @@ public class JsonFormatter
         return formatToBuilder(new ByteInputStream(bytes),separator).toString();
     }
 
-    public static String formatToString(Reader reader,String separator) throws IOException
+    public static String formatToString(final Reader reader, String separator) throws IOException
     {
         return formatToBuilder(new InputStream()
         {
@@ -189,7 +172,7 @@ public class JsonFormatter
         return new CharsInputStream(result);
     }
 
-    public static InputStream formatToInputStream(Reader reader,String separator) throws IOException
+    public static InputStream formatToInputStream(final Reader reader, String separator) throws IOException
     {
         StringBuilder result = formatToBuilder(new InputStream()
         {
