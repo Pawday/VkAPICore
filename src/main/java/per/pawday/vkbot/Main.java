@@ -2,9 +2,10 @@ package per.pawday.vkbot;
 
 
 import per.pawday.vkbot.console.ConsoleColors;
+import per.pawday.vkbot.eventHandler.EventHandler;
+import per.pawday.vkbot.vk.VkRequester;
+
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
 
 
 class Main
@@ -22,12 +23,18 @@ class Main
         Configs.init();
 
 
-        Calendar calendar = Calendar.getInstance();
+        //confirm groups tokens
+        {
+            String[] groupsTokens = Configs.configs.tokens.getGroupsTokens();
 
-        System.out.println(calendar.getFirstDayOfWeek());
+            for (int i = 0; i < groupsTokens.length; i++)
+            {
+                VkRequester requester = new VkRequester("5.95",groupsTokens[i]);
+                requester.post("groups.getTokenPermissions",null);
+            }
+        }
 
-
-
+        //Thread handler = new Thread(new EventHandler());
 
     }
 }
