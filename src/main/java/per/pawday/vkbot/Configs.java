@@ -46,7 +46,6 @@ class Configs
 
         setParams();
 
-        removeFiles();
 
     }
 
@@ -378,11 +377,6 @@ class Configs
         configsDatabase.delete();
     }
 
-    public static void returnFiles()
-    {
-        createFiles();
-        writeToFiles();
-    }
 
     public static class TheConfigs
     {
