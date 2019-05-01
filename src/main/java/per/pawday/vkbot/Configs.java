@@ -1,11 +1,13 @@
 package per.pawday.vkbot;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import per.pawday.jsonFormatter.JsonFormatter;
+import per.pawday.jsonFormatter.constants.IndentChars;
+import per.pawday.jsonFormatter.constants.IndentsStyles;
+import per.pawday.jsonFormatter.exceptions.JsonFormatterException;
 import per.pawday.vkbot.console.ConsoleColors;
-import per.pawday.vkbot.json.JsonFormatter;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -15,9 +17,19 @@ class Configs
 {
 
     //tools
+    static JsonFormatter formatter;
 
-    private static JSONParser parser = new JSONParser();
-
+    static
+    {
+        try
+        {
+            formatter = new JsonFormatter(IndentsStyles.ERIC_ALLMANS_STYLE, IndentChars.TAB,1);
+        }
+        catch (JsonFormatterException ignored)
+        {
+            // i used embedded constants
+        }
+    }
 
     //directory
     private final static File configsDir = new File("configs");
@@ -62,7 +74,7 @@ class Configs
                 configsTokens.createNewFile();
                 FileOutputStream out = new FileOutputStream(configsTokens);
 
-                out.write(JsonFormatter.formatToString(configs.tokens.tokenObject.toJSONString(),"\t").getBytes());
+                out.write(formatter.formatToString(configs.tokens.tokenObject.toString()).getBytes());
                 out.close();
 
             } catch (IOException e)
@@ -81,7 +93,7 @@ class Configs
                 configsDatabase.createNewFile();
                 FileOutputStream out = new FileOutputStream(configsDatabase);
 
-                out.write(JsonFormatter.formatToString(configs.database.databaseObject.toJSONString(),"\t").getBytes());
+                out.write(formatter.formatToString(configs.database.databaseObject.toString()).getBytes());
                 out.close();
 
             } catch (IOException e)
@@ -102,7 +114,7 @@ class Configs
             {
 
                 InputStream stream = new FileInputStream(configsTokens);
-                JSONObject fileObject = (JSONObject) parser.parse(new InputStreamReader(stream));
+                JSONObject fileObject = new JSONObject(new JSONTokener(new InputStreamReader(stream)));
                 stream.close();
 
 
@@ -127,13 +139,6 @@ class Configs
                 e.printStackTrace();
                 System.exit(1);
             }
-            catch (ParseException e)
-            {
-                System.out.println(ConsoleColors.RED + "File " + configsDir.getName() + "/" + configsTokens.getName() + " был повреждён!" + ConsoleColors.RESET);
-                System.out.println(ConsoleColors.YELLOW + "Была повреждена структура json: это может быть: стёртая запятая , фигурная скобка , квадратная скобка" + ConsoleColors.RESET);
-                e.printStackTrace();
-                System.exit(1);
-            }
 
         }
 
@@ -142,7 +147,7 @@ class Configs
             try
             {
                 InputStream stream = new FileInputStream(configsDatabase);
-                JSONObject fileObject = (JSONObject) parser.parse(new InputStreamReader(stream));
+                JSONObject fileObject = new JSONObject(new JSONTokener(new InputStreamReader(stream)));
                 stream.close();
 
                 if
@@ -265,13 +270,6 @@ class Configs
                 e.printStackTrace();
                 System.exit(1);
             }
-            catch (ParseException e)
-            {
-                System.out.println(ConsoleColors.RED + "File " + configsDir.getName() + "/" + configsDatabase.getName() + " был повреждён!" + ConsoleColors.RESET);
-                System.out.println(ConsoleColors.YELLOW + "Была повреждена структура json: это может быть: стёртая запятая , фигурная скобка , квадратная скобка" + ConsoleColors.RESET);
-                e.printStackTrace();
-                System.exit(1);
-            }
 
 
         }
@@ -284,7 +282,7 @@ class Configs
             try
             {
                 FileOutputStream out = new FileOutputStream(configsTokens);
-                out.write(JsonFormatter.formatToString(configs.tokens.tokenObject.toJSONString(),"\t").getBytes(StandardCharsets.UTF_8));
+                out.write(formatter.formatToString(configs.tokens.tokenObject.toString()).getBytes(StandardCharsets.UTF_8));
                 out.close();
             }
             catch (FileNotFoundException e)
@@ -303,7 +301,7 @@ class Configs
             try
             {
                 FileOutputStream out = new FileOutputStream(configsDatabase);
-                out.write(JsonFormatter.formatToString(configs.database.databaseObject.toJSONString(),"\t").getBytes(StandardCharsets.UTF_8));
+                out.write(formatter.formatToString(configs.database.databaseObject.toString()).getBytes(StandardCharsets.UTF_8));
                 out.close();
             }
             catch (FileNotFoundException e)
@@ -329,8 +327,8 @@ class Configs
             JSONArray groupsTokensJsonArray = (JSONArray) configs.tokens.tokenObject.get("groups_tokens");
             JSONArray adminsTokensJsonArray = (JSONArray) configs.tokens.tokenObject.get("admins_tokens");
 
-            String[] groupTokens = new String[groupsTokensJsonArray.size()];
-            String[] adminsTokens = new String[adminsTokensJsonArray.size()];
+            String[] groupTokens = new String[groupsTokensJsonArray.length()];
+            String[] adminsTokens = new String[adminsTokensJsonArray.length()];
 
             for (int i = 0; i < groupTokens.length; i++)
             {
@@ -396,7 +394,7 @@ class Configs
             Tokens()
             {
                 JSONArray sampleText = new JSONArray();
-                sampleText.add("");
+                sampleText.put("");
                 tokenObject.put("groups_tokens", sampleText);
                 tokenObject.put("admins_tokens", sampleText);
             }

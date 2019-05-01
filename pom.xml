@@ -9,6 +9,12 @@
     <version>1.0.0</version>
 
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
     <build>
         <plugins>
             <plugin>
@@ -55,13 +61,16 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
-            <artifactId>json-simple</artifactId>
-            <version>1.1.1</version>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20180813</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.github.Pawday</groupId>
+            <artifactId>JSONFormatter</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
-
 
 
 

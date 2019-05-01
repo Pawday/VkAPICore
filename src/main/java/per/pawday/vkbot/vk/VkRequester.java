@@ -2,9 +2,9 @@ package per.pawday.vkbot.vk;
 
 
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 
 import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
@@ -17,7 +17,6 @@ import java.util.Map;
 public class VkRequester
 {
     private static SSLSocketFactory ssf = (SSLSocketFactory) SSLSocketFactory.getDefault();
-    private static JSONParser parser = new JSONParser();
 
 
 
@@ -119,12 +118,7 @@ public class VkRequester
 
         JSONObject reter = null;
 
-        try
-        {
-            reter = (JSONObject) parser.parse(arr[1]);
-        } catch (ParseException ignored)
-        {}
-
+        reter = new JSONObject(new JSONTokener(arr[1]));
         return reter;
 
 
