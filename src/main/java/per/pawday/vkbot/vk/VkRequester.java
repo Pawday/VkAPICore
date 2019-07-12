@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 
 public class VkRequester
@@ -30,28 +31,21 @@ public class VkRequester
         this.token = token;
     }
 
-
-
     public JSONObject post(String method , Map<String,String> params) throws IOException
     {
 
-
         Socket socket = ssf.createSocket("api.vk.com",443);
-
 
         StringBuilder reqBody = new StringBuilder();
 
         reqBody.append("access_token=").append(token);
         reqBody.append("&v=").append(vkAPIVersion);
+        if (params == null) params = new HashMap<>();
 
         if (params.size() != 0)
         {
             reqBody.append("&");
         }
-
-
-
-
         Object[] keys = params.keySet().toArray();
         Object[] vals = params.values().toArray();
 
@@ -67,18 +61,7 @@ public class VkRequester
                 reqBody.append("&");
             }
         }
-
-
-
-
-
-
-
-
-
-
         OutputStream stream = socket.getOutputStream();
-
 
         String s =
                 "POST /method/".concat(method).concat(" HTTP/1.1\n" +
@@ -88,14 +71,10 @@ public class VkRequester
 
         stream.write(s.getBytes());
 
-
-
         InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8);
 
 
         StringBuilder builder = new StringBuilder();
-
-
 
         {
             int b;
@@ -105,24 +84,13 @@ public class VkRequester
                 builder.append((char) b);
             }
         }
-
-
-
         socket.close();
 
-
-
-
         String[] arr = builder.toString().split("\r\n\r\n");
-
 
         JSONObject reter = null;
 
         reter = new JSONObject(new JSONTokener(arr[1]));
         return reter;
-
-
     }
-
-
 }
