@@ -1,6 +1,6 @@
 package per.pawday.vkbot.api;
 
-public interface MainModule
+public interface Module
 {
     public void run();
 }
