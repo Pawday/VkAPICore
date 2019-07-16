@@ -88,9 +88,7 @@ public class VkRequester
 
         String[] arr = builder.toString().split("\r\n\r\n");
 
-        JSONObject reter = null;
-
-        reter = new JSONObject(new JSONTokener(arr[1]));
+        JSONObject reter = new JSONObject(new JSONTokener(arr[1]));
         return reter;
     }
 }

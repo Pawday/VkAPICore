@@ -1,50 +1,41 @@
 package per.pawday.vkbot;
 
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import per.pawday.jsonFormatter.JsonFormatter;
-import per.pawday.jsonFormatter.constants.IndentChars;
-import per.pawday.jsonFormatter.constants.IndentsStyles;
-import per.pawday.jsonFormatter.exceptions.JsonFormatterException;
+import per.pawday.vkbot.console.ConsoleColors;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 class Configs
 {
-    private static JsonFormatter formatter;
-
-    static
-    {
-        try
-        {
-            formatter = new JsonFormatter(IndentsStyles.ERIC_ALLMANS_STYLE, IndentChars.TAB,1);
-        } catch (JsonFormatterException e)
-        {
-            // i used embedded constants
-        }
-        tokenFile = new File("configs" + File.separator + "tokens.json");
-        tokens = new Tokens();
-    }
 
 
     public static Tokens tokens;
+    private static String apiVersion = "5.101";
 
 
     private static File tokenFile;
     static boolean inited = false;
 
+    static void init()
+    {
+        tokenFile = new File("configs" + File.separator + "tokens.json");
+        tokens = new Tokens();
+    }
 
-    static void init() throws IOException
+
+    static void initFiles() throws IOException
     {
 
         tokenFile = new File("configs" + File.separator + "tokens.json");
 
         if (!tokenFile.exists())
         {
-            if(!tokenFile.createNewFile())  throw new IOException("File creating exception");
+            new File("configs").delete();
+            new File("configs").mkdir();
+            if(!tokenFile.createNewFile()) throw new IOException("File creating exception");
         }
         else
         {
@@ -57,11 +48,10 @@ class Configs
 
         tokensObject.put("group_token","");
         tokensObject.put("admin_token","");
-        tokensObject.put("group_id","");
 
         FileOutputStream tokenOutputStream = new FileOutputStream(tokenFile);
 
-        tokenOutputStream.write(formatter.formatToString(tokensObject.toString()).getBytes(StandardCharsets.UTF_8));
+        tokenOutputStream.write(Main.formatter.formatToString(tokensObject.toString()).getBytes(StandardCharsets.UTF_8));
         tokenOutputStream.close();
 
         tokens = new Tokens();
@@ -73,7 +63,6 @@ class Configs
     {
         private String groupToken;
         private String adminToken;
-        private String groupId;
 
         Tokens()
         {
@@ -82,32 +71,19 @@ class Configs
             {
                 if (!tokenFile.exists())
                 {
-                    init();
+                    System.out.println(ConsoleColors.YELLOW + "Выполните инициализацию" + ConsoleColors.RESET);
+                    System.exit(-1);
                 }
                 inputStream = new FileInputStream(tokenFile);
 
                 JSONObject object = new JSONObject(new JSONTokener(inputStream));
                 this.groupToken= object.getString("group_token");
                 this.adminToken = object.getString("admin_token");
-                this.groupId = object.getString("group_id");
 
-            } catch (FileNotFoundException e)
-            {
-                e.printStackTrace();
-            } catch (IOException e)
-            {
-                e.printStackTrace();
             }
-            finally
+            catch (FileNotFoundException ignored)
             {
-                try
-                {
-                    inputStream.close();
-                }
-                catch (IOException e)
-                {
-                    // already closed
-                }
+                // file is EXISTS
             }
         }
 
@@ -120,10 +96,10 @@ class Configs
         {
             return groupToken;
         }
+    }
 
-        public String getGroupId()
-        {
-            return groupId;
-        }
+    public static String getApiVersion()
+    {
+        return apiVersion;
     }
 }
