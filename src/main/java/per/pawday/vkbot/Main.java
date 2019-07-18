@@ -8,6 +8,7 @@ import per.pawday.jsonFormatter.constants.IndentChars;
 import per.pawday.jsonFormatter.constants.IndentsStyles;
 import per.pawday.jsonFormatter.exceptions.JsonFormatterException;
 import per.pawday.vkbot.console.ConsoleColors;
+import per.pawday.vkbot.handlers.BotsLongPollHandler;
 import per.pawday.vkbot.handlers.UserLongPollHandler;
 import per.pawday.vkbot.vk.VkRequester;
 
@@ -188,10 +189,13 @@ public class Main
                 System.exit(-1);
             }
         }
-
         Thread usersLongPollThread = new Thread(new UserLongPollHandler(Configs.tokens.getGroupToken(),Configs.getApiVersion()));
-        usersLongPollThread.setPriority(10);
+        usersLongPollThread.setPriority(5);
         usersLongPollThread.start();
+
+        Thread botsLongPollThread = new Thread(new BotsLongPollHandler(Configs.tokens.getGroupToken(),Configs.getApiVersion()));
+        botsLongPollThread.setPriority(5);
+        botsLongPollThread.start();
 
 
     }

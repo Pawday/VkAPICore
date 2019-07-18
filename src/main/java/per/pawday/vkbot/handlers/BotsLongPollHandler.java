@@ -2,49 +2,55 @@ package per.pawday.vkbot.handlers;
 
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import per.pawday.vkbot.Main;
 import per.pawday.vkbot.console.ConsoleColors;
 import per.pawday.vkbot.vk.VkRequester;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-
-public class UserLongPollHandler implements Runnable
+public class BotsLongPollHandler implements Runnable
 {
-	public UserLongPollHandler(String token, String apiVersion)
+	public BotsLongPollHandler(String token, String apiVersion)
 	{
 		this.requester = new VkRequester(apiVersion,token);
 	}
 
 	SSLSocketFactory ssf = (SSLSocketFactory) SSLSocketFactory.getDefault();
+	private VkRequester requester;
 	private Map<String,String> params = new HashMap<>();
+	private JSONObject response;
+	private SSLSocket socket;
+
 
 	private String server;
 	private String key;
 	private String ts;
-	private String pts;
-	private VkRequester requester;
 
-	private JSONObject response;
-
-	private SSLSocket socket;
 
 	private void getParams()
 	{
 		params.clear();
-		params.put("need_pts","1");
-		params.put("lp_version","3");
 		JSONObject res = null;
+
 		try
 		{
-			res = requester.post("messages.getLongPollServer",params);
+			res = requester.post("groups.getById",params);
+			int groupID = res.getJSONArray("response").getJSONObject(0).getInt("id");
+
+			params.put("group_id",String.valueOf(groupID));
+
+			res = requester.post("groups.getLongPollServer",params);
+
+
 			this.key = res.getJSONObject("response").getString("key");
 			this.server = res.getJSONObject("response").getString("server");
-			this.pts = String.valueOf(res.getJSONObject("response").getInt("pts"));
 			this.ts = String.valueOf(res.getJSONObject("response").getInt("ts"));
 		}
 		catch (IOException e)
@@ -57,17 +63,16 @@ public class UserLongPollHandler implements Runnable
 	@Override
 	public void run()
 	{
-
 		this.getParams();
-
 		while (true)
 		{
 			this.response = lpReq();
 			if (this.response.has("failed"))
 			{
 				//TODO: remove yellow logs
-				System.out.println(ConsoleColors.YELLOW + "Failed: user ..........." + ConsoleColors.RESET);
-				System.out.println(this.response);
+				System.out.println(ConsoleColors.YELLOW + "Failed: bots...........");
+				System.out.println(Main.formatter.formatToString(this.response.toString()));
+				System.out.println("//..................." + ConsoleColors.RESET);
 				switch (this.response.getInt("failed"))
 				{
 					case 1:
@@ -78,9 +83,10 @@ public class UserLongPollHandler implements Runnable
 						this.getParams();
 						continue;
 				}
-				System.out.println(ConsoleColors.YELLOW + "//......................." + ConsoleColors.RESET);
 			}
+
 			//TODO: At this point, the event must be sent to the distributors.
+
 			System.out.println(response);
 			this.ts = String.valueOf(response.getInt("ts"));
 		}
@@ -91,25 +97,23 @@ public class UserLongPollHandler implements Runnable
 		String reqBody = "act=a_check" + "&" +
 				"key=" + this.key + "&" +
 				"ts="+ this.ts + "&" +
-				"wait=25" +"&" +
-				"mode=255" + "&" +
-				"version=3";
+				"wait=25";
 
 		byte[] s =
-				"POST /".concat(server.split("/")[1]).concat(" HTTP/1.1\n" +
-				"Host: " + server.split("/")[0] + "\n" +
+				"POST /".concat(server.split("//")[1].split("/")[1]).concat(" HTTP/1.1\n" +
+				"Host: " + server.split("//")[1].split("/")[0] + "\n" +
 				"Connection: close\n" +
 				"Content-Length: ".concat(String.valueOf(reqBody.length())).concat("\n\n").concat(reqBody)).getBytes(StandardCharsets.UTF_8);
+
 		JSONObject object = null;
 
 		try
 		{
-			socket = (SSLSocket) ssf.createSocket(this.server.split("/")[0], 443);
+			socket = (SSLSocket) ssf.createSocket(this.server.split("//")[1].split("/")[0], 443);
 
-			{
-				OutputStream out = socket.getOutputStream();
-				out.write(s);
-			}
+			OutputStream out = socket.getOutputStream();
+			out.write(s);
+
 			InputStream in = socket.getInputStream();
 			{
 				char[] chars = new char[] {'a','b','c','d'};
@@ -136,7 +140,6 @@ public class UserLongPollHandler implements Runnable
 					else
 						throw new IOException("");
 				}
-
 				object = new JSONObject(new JSONTokener(in));
 
 				socket.close();
