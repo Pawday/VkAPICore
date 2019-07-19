@@ -10,6 +10,7 @@ import per.pawday.jsonFormatter.exceptions.JsonFormatterException;
 import per.pawday.vkbot.console.ConsoleColors;
 import per.pawday.vkbot.handlers.BotsLongPollHandler;
 import per.pawday.vkbot.handlers.UserLongPollHandler;
+import per.pawday.vkbot.modularity.routing.ModuleRouter;
 import per.pawday.vkbot.vk.VkRequester;
 
 import java.io.File;
@@ -44,6 +45,7 @@ public class Main
             try
             {
                 Configs.initFiles();
+                ModuleRouter.init();
             }
             catch (IOException e)
             {
